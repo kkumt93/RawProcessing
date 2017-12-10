@@ -31,12 +31,6 @@ void createTestRaw()
 {
 	ofstream fout;
 	fout.open("test.raw", ios::out | ios::binary | ios::trunc);
-	//  ファイルを開く
-	//  ios::out は書き込み専用（省略可）
-	//  ios::binary はバイナリ形式で出力（省略するとアスキー形式で出力）
-	//  ios::truncはファイルを新規作成（省略可）
-	//  ios::addにすると追記になる
-
 
 	if (!fout) {
 		cout << "ファイル file.txt が開けません";
@@ -88,8 +82,7 @@ int main(int argc, const char* argv[]) {
 	
 	rawCvtArray(&img1,"test.raw");
 
-	cout << img1.data[0][0] << endl;
-	cout << img1.data[719][639] << endl;
+
 
 	return 0;
 }
