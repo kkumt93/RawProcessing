@@ -12,10 +12,10 @@ using namespace cv;
 #define RAW_H 720
 
 //Raw画像構造体
-struct RawImg {
-	int h_size = 720;
-	int w_size = 640;
-	unsigned short data[720][640] = { 0 };
+struct RawArray {
+	int hsize = RAW_H;
+	int wsize = RAW_W;
+	unsigned short data[RAW_H][RAW_W] = { 0 };
 };
 
 //エンディアン変換16bit版
@@ -40,7 +40,6 @@ void createTestRaw()
 
 	unsigned short a;
 
-
 	for (int i = 0; i<RAW_H; i++) {
 		for (int j = 0; j < RAW_W; j++) {
 			a = unsigned short((0xffff / 640) * j);
@@ -53,7 +52,7 @@ void createTestRaw()
 }
 
 //Raw画像を配列に格納
-void rawCvtArray(RawImg *img1,char *str)
+void rawCvtArray(RawArray *img1,char *str)
 {
 	ifstream fin(str, ios::in | ios::binary);
 
@@ -64,8 +63,8 @@ void rawCvtArray(RawImg *img1,char *str)
 
 	unsigned short data;
 	
-	for (int i = 0; i < img1->h_size; i++) {
-		for (int j = 0; j < img1->w_size; j++) {
+	for (int i = 0; i < img1->hsize; i++) {
+		for (int j = 0; j < img1->wsize; j++) {
 			fin.read((char *)&data, sizeof(unsigned short));
 			data = swap(data);
 			img1->data[i][j] = data;
@@ -75,16 +74,36 @@ void rawCvtArray(RawImg *img1,char *str)
 	fin.close();
 }
 
+//ArrayをMatに格納
+void arrayCvtMat(RawArray *img1, Mat img2)
+{
+
+	for (int i = 0; i < img1->hsize; i++) {
+		for (int j = 0; j < img1->wsize; j++) {
+			img2.at<unsigned short>(i,j) = img1->data[i][j];
+		}
+	}
+
+
+}
 
 int main(int argc, const char* argv[]) {
 
 	createTestRaw();
 
-	RawImg img1;
+	RawArray img1;
 	
 	rawCvtArray(&img1,"test.raw");
 
+	Mat img2(RAW_H, RAW_W, CV_16UC1);
 
+	arrayCvtMat(&img1, img2);
+
+	cv::namedWindow("Image", CV_WINDOW_AUTOSIZE | CV_WINDOW_FREERATIO);
+	cv::imshow("Image", img2);
+
+
+	waitKey(0);
 
 	return 0;
 }
