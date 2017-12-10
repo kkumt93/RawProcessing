@@ -11,6 +11,7 @@ using namespace cv;
 #define RAW_W 640
 #define RAW_H 720
 
+//Raw画像構造体
 struct RawImg {
 	int h_size = 720;
 	int w_size = 640;
@@ -51,6 +52,7 @@ void createTestRaw()
 	fout.close();
 }
 
+//Raw画像を配列に格納
 void rawCvtArray(RawImg *img1,char *str)
 {
 	ifstream fin(str, ios::in | ios::binary);
