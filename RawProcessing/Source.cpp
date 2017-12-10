@@ -34,7 +34,7 @@ void createTestRaw()
 	fout.open("test.raw", ios::out | ios::binary | ios::trunc);
 
 	if (!fout) {
-		cout << "ファイル file.txt が開けません";
+		cout << "test.rawが開けません";
 		exit(1);
 	}
 
@@ -80,12 +80,43 @@ void arrayCvtMat(RawArray *img1, Mat img2)
 
 	for (int i = 0; i < img1->hsize; i++) {
 		for (int j = 0; j < img1->wsize; j++) {
-			img2.at<unsigned short>(i,j) = img1->data[i][j];
+			img2.at<unsigned short>(i, j) = img1->data[i][j];
 		}
 	}
 
 
 }
+
+//MatをRaw形式でダンプ
+void matRawDump(Mat img1, char *str)
+{
+	ofstream fout;
+	fout.open(str, ios::out | ios::binary | ios::trunc);
+
+	if (!fout) {
+		cout << str << "が開けません";
+		exit(1);
+	}
+
+	unsigned short a;
+	
+	for (int i = 0; i<img1.rows; i++) {
+		for (int j = 0; j < img1.cols; j++) {
+			a = img1.at<unsigned short>(i, j);
+			a = swap(a);
+			fout.write((char *)&a, sizeof(unsigned short));
+		}
+	}
+
+	fout.close();
+}
+
+//Matを任意のラインで分割して並び替え
+void matLineSplit(Mat img1, Mat img2, int splt_ln)
+{
+
+}
+
 
 int main(int argc, const char* argv[]) {
 
@@ -99,11 +130,18 @@ int main(int argc, const char* argv[]) {
 
 	arrayCvtMat(&img1, img2);
 
+	Mat img3(RAW_H, RAW_W, CV_16UC1);
+
+	matLineSplit(img2, img3, 3);
+
+	matRawDump(img2,"mat1.raw");
+
+	//デバッグ
+	/* 
 	cv::namedWindow("Image", CV_WINDOW_AUTOSIZE | CV_WINDOW_FREERATIO);
 	cv::imshow("Image", img2);
-
-
 	waitKey(0);
+	*/
 
 	return 0;
 }
